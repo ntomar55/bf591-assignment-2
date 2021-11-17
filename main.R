@@ -27,9 +27,11 @@ load_expression <- function(filepath) {
   return(expression)
 }
 
+#### Data types ####
+
+
 #### Markdown ####
-source(knitr::purl('report.Rmd'))
-print(print1())
+#source(knitr::purl('report.Rmd'))
 
 if(interactive()) {
   # load_bioconductor()
