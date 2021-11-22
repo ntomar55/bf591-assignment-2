@@ -19,6 +19,7 @@ load_bioconductor <- function() {
   library(sva)
   library(AnnotationDbi)
   library(hgu133plus2.db)
+  library(tidyverse)
 }
 
 load_expression <- function(filepath) {
@@ -29,7 +30,7 @@ load_expression <- function(filepath) {
 
 filter_15 <- function(dataframe){
   # for each gene, at least 15% of the gene-expression values must be > log2(15)
-  # return a list of sample positions with 15% of values greater than log2(15)
+  # return a list of sample names with 15% of values greater than log2(15)
   percent_gt <- function(row) {
     # functions can be defined inside other functions, which can be one style to
     # make your code more repeatable
@@ -42,7 +43,7 @@ filter_15 <- function(dataframe){
   output_list <- data.frame(samples = NULL)
   for (row in seq(1, length(row.names(dataframe)))) {
     if (percent_gt(dataframe[row,]) >= 0.15) {
-      output_list <- rbind(output_list, row)
+      output_list <- rbind(output_list, row.names(dataframe[row,]))
     }
   }
   return(output_list)
@@ -69,8 +70,18 @@ df_trim <- function(df, row_name, col_name) {
   return(df[row_name, col_name])
 }
 
-row.names(df) <- c("row1", "row2", "row3")
-df_trim(df, c("row2", "row3"), c("a"))
+#### ggplot ####
+
+plot_ggplot <- function(dataframe) {
+  # starting with a dataframe, plot a distribution of all of the expression
+  # data points. return a ggplot object (i.e. if you run this function, it should
+  # plot a graph in rstudio)
+  long_df <- gather(expr)
+  p <- ggplot(long_df, aes(x=value)) +
+    geom_histogram() +
+    geom_vline(xintercept = log2(15))
+  return(p)
+}
 
 #### Markdown ####
 #source(knitr::purl('report.Rmd'))
@@ -78,5 +89,6 @@ df_trim(df, c("row2", "row3"), c("a"))
 if(interactive()) {
   # load_bioconductor()
   # expr <- load_expression('/project/bf528/project_1/data/example_intensity_data.csv')
-  # samples <- filter_15(expr)
+  samples <- filter_15(expr)
+  p <- plot_ggplot(expr)
 }
