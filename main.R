@@ -5,48 +5,50 @@
 ## Assignment Week 2
 
 #### Bioconductor ####
-load_bioconductor <- function() {
-  # have students find correct install lines from https://bioconductor.org/install/ ?
-  # note that this is different for the current version of Bioconductor than the 528 tutorial
-  if (!require("BiocManager", quietly = TRUE)){
-    install.packages("BiocManager")
-  }
-  BiocManager::install(c('affy','affyPLM','sva', 'Biobase',
-                         'AnnotationDbi','hgu133plus2.db'), 
-                       version = "3.13")
-  library(affy)
-  library(affyPLM)
-  library(sva)
-  library(AnnotationDbi)
-  library(hgu133plus2.db)
-  library(tidyverse)
+# it is standard among R packages to define libraries and packages at the 
+# beginning of a script. Also note that a package should NOT be installed every 
+# time a script runs.
+# The bioconductor repository has installation instructions for biomaRt: 
+# https://bioconductor.org/install/
+
+if (!require("BiocManager", quietly = TRUE)){
+  install.packages("BiocManager")
 }
+if (!require("biomaRt", quietly = TRUE)){
+  BiocManager::install("biomaRt")
+}
+library(biomaRt)
+library(tidyverse)
 
 load_expression <- function(filepath) {
-  # Load the csv of expression data from the filepath variable, returns stored object
-  expression <- read.csv(filepath, header = TRUE, sep = " ")
-  return(expression)
+  # Load the csv of expression data from the filepath variable, returns a tibble
+  return(read_csv(filepath))
 }
 
-filter_15 <- function(dataframe){
+#' Title
+#'
+#' @param tibble A tibble of expression values, rows by probe and columns by sample.
+#'
+#' @return A vector of affymetrix probe names from the input expression data tibble. 
+#' These names match the rows with 15% or more of the expression values about log2(15)
+#' @export
+#'
+#' @examples
+filter_15 <- function(tibble){
   # for each gene, at least 15% of the gene-expression values must be > log2(15)
   # return a list of sample names with 15% of values greater than log2(15)
   percent_gt <- function(row) {
     # functions can be defined inside other functions, which can be one style to
     # make your code more repeatable
-    boolean_row <- row[1,] > log2(15)
+    boolean_row <- row > log2(15)
     percent_row <- sum(boolean_row)/length(row)
     return(percent_row)
   }
-  # there are many ways in R to apply our function to the entire data frame
-  # fastest would be an apply, but we can use a for loop for now
-  output_list <- data.frame(samples = NULL)
-  for (row in seq(1, length(row.names(dataframe)))) {
-    if (percent_gt(dataframe[row,]) >= 0.15) {
-      output_list <- rbind(output_list, row.names(dataframe[row,]))
-    }
-  }
-  return(output_list)
+  # there are many ways in R to apply our function to the entire tibble
+  # fastest would be an lapply, but a for loop would work (just slowly)
+  row_pct <- apply(tibble[2:ncol(tibble)], percent_gt, MARGIN = 1) # don't capture first row
+  boolean_rows <- which(row_pct > 0.15)
+  return(tibble[boolean_rows, 1])
 }
 
 #### Data types ####
@@ -83,12 +85,40 @@ plot_ggplot <- function(dataframe) {
   return(p)
 }
 
+#### gene name conversion ####
+
+#' Convert affymetrix array names into hgnc_symbol IDs using biomaRt
+#'
+#' @param affy_vector 
+#'
+#' @return 
+#' @export
+#'
+#' @examples
+affy_to_hgnc <- function(affy_vector) {
+  ensembl <- useDataset("hsapiens_gene_ensembl", useMart("ensembl"))
+  newNames <- getBM(attributes = c('affy_hg_u133_plus_2', 'hgnc_symbol'), 
+        filters = c('affy_hg_u133_plus_2'),
+        values = testMart[1:100], 
+        mart = ensembl)
+  return(newNames)
+}
+
 #### Markdown ####
 #source(knitr::purl('report.Rmd'))
 
+# this if statement means that this segment of code will only run when in 
+# interactive mode, i.e. RStudio. You can include examples for your functions 
+# here, and not worry about loading a lot of data when you source() this from
+# another script or RMarkdown file. 
+# This kind of setup may also prove useful if you select "source on save", which 
+# runs your entire script every time it saves.
 if(interactive()) {
-  # load_bioconductor()
-  # expr <- load_expression('/project/bf528/project_1/data/example_intensity_data.csv')
+  tmp_csv <- read.csv('/project/bf528/project_1/data/example_intensity_data.csv',
+                      header = T, sep = " ")
+  tmp_csv <- cbind(probeids = row.names(tmp_csv), tmp_csv)
+  write_csv(tmp_csv, file = "temp_intensity_data.csv")
+  expr <- load_expression("temp_intensity_data.csv")
   samples <- filter_15(expr)
-  p <- plot_ggplot(expr)
+  #p <- plot_ggplot(expr)
 }

@@ -73,3 +73,9 @@ print(paste(message, 'But there\'s always room for more.'))
 # Assignment
 Using what you now know from both plotting and data manipulation, use ggplot to create 
 
+```{r}
+source("main.R")
+kissy()
+```
+
+

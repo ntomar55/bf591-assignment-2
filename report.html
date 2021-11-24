@@ -224,7 +224,7 @@ print(say_hi())</code></pre>
 <p>The syntax of the **snippet* is simple, with three back ticks <code>```</code> indicating the start and end of the snippet, and a lower case <code>r</code> in curly braces <code>{}</code> to indicate what language is used: <code>{r}</code> indicates R, <code>{python}</code> indicates Python. R Markdown does not support every language, but there are use cases where one document running both R and Python code can prove extremely useful and concise. There is also a button in RStudio to insert a snippet, it is a small green <code>+C</code> in the top right of the editor.</p>
 <pre class="python"><code>import datetime
 print(f&#39;Wishing you a wonderful hello from Python at {datetime.datetime.now()}&#39;)</code></pre>
-<pre><code>## Wishing you a wonderful hello from Python at 2021-11-17 12:52:22.446204</code></pre>
+<pre><code>## Wishing you a wonderful hello from Python at 2021-11-23 15:05:11.395459</code></pre>
 <p>I can also test my code in RStudio without having to knit the entire document by pressing the green “Play” arrow on the snippet I am interested in.</p>
 <p>Finally, R Markdown scripts can <code>source()</code> other <code>.R</code> scripts and use them in their execution environment. This mean I can define a function in my <code>main.R</code> script and use it in my R Markdown snippets. Note that the converse is true, using <code>knitr::purl()</code>, and the code established in an R Markdown can be sourced, and <em>tested</em>, using an normal <code>.R</code> script.</p>
 <p>Also note that the environment is carried from one snippet to another, so if I define a function or load a file in one snippet I can use those objects in later snippets.</p>
@@ -236,6 +236,20 @@ print(f&#39;Wishing you a wonderful hello from Python at {datetime.datetime.now(
 <div id="assignment" class="section level1">
 <h1>Assignment</h1>
 <p>Using what you now know from both plotting and data manipulation, use ggplot to create</p>
+<pre class="r"><code>source(&quot;main.R&quot;)</code></pre>
+<pre><code>## Bioconductor version &#39;3.13&#39; is out-of-date; the current release version &#39;3.14&#39;
+##   is available with R version &#39;4.1&#39;; see https://bioconductor.org/install</code></pre>
+<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──</code></pre>
+<pre><code>## ✓ ggplot2 3.3.5     ✓ purrr   0.3.4
+## ✓ tibble  3.1.3     ✓ dplyr   1.0.7
+## ✓ tidyr   1.1.3     ✓ stringr 1.4.0
+## ✓ readr   2.0.1     ✓ forcats 0.5.1</code></pre>
+<pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()
+## x dplyr::select() masks biomaRt::select()</code></pre>
+<pre class="r"><code>kissy()</code></pre>
+<pre><code>## [1] &quot;hewwoooo&quot;</code></pre>
 </div>
 
 
