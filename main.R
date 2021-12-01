@@ -22,7 +22,7 @@ library(tidyverse)
 
 #' Load Expression Data
 #'
-#' @param filepath A text string of the full filepath to the file to load.
+#' @param filepath A text st1pm on Thursdayring of the full filepath to the file to load.
 #'
 #' @return A tibble containing the data loaded from the CSV in `filepath`. 
 #' 
@@ -34,7 +34,9 @@ library(tidyverse)
 #' @examples 
 #' `data <- load_expression('/project/bf528/project_1/data/example_intensity_data.csv')`
 load_expression <- function(filepath) {
-  return(read_csv(filepath))
+  tmp_csv <- read.csv(filepath, header = T, sep = " ")
+  tmp_csv <- cbind(probeids = row.names(tmp_csv), tmp_csv)
+  return(tibble(tmp_csv))
 }
 
 #' Filter 15% of the gene expression values.
@@ -183,32 +185,22 @@ reduce_data <- function(expr_tibble, names_ids, good_genes, bad_genes){
 #' @examples `p <- plot_ggplot(plot_tibble)`
 plot_ggplot <- function(tibble) {
   tibble %>% pivot_longer(starts_with('GSM'), names_to = 'sample') -> tibble
-  print(tibble)
   p <- ggplot(tibble, aes(x=hgnc, y=value)) +
     geom_boxplot()
   return(p)
 }
 
 # this if statement means that this segment of code will only run when in 
-# interactive mode, i.e. RStudio. You can include examples for your functions 
-# here, and not worry about loading a lot of data when you source() this from
-# another script or RMarkdown file. 
-# This kind of setup may also prove useful if you select "source on save", which 
-# runs your entire script every time it saves.
+# interactive mode, i.e. RStudio. Using Rscript on the command line will not run 
+# this segment. 
 if(interactive()) {
-  tmp_csv <- read.csv('/project/bf528/project_1/data/example_intensity_data.csv',
-                      header = T, sep = " ")
-  tmp_csv <- cbind(probeids = row.names(tmp_csv), tmp_csv)
-  write_csv(tmp_csv, file = "temp_intensity_data.csv")
-  expr <- load_expression("temp_intensity_data.csv")
-  samples <- filter_15(expr)
-  sample_names <- affy_to_hgnc(samples)
-  goodGenes <- sample(sample_names$hgnc_symbol, 10)
-  badGenes <- sample(sample_names$hgnc_symbol, 10)
-  # temp bad example code:
-  badGenes <- badGenes[-which(badGenes == "")]
-  goodGenes <- goodGenes[-which(goodGenes == "")]
-  plot_tibble <- reduce_data(expr_tibble = expr, names_ids = sample_names, 
+  # expr <- load_expression("/project/bf528/project_1/data/example_intensity_data.csv")
+  # samples <- filter_15(expr)
+  # sample_names <- affy_to_hgnc(samples)
+  all_names <- sample_names$hgnc_symbol[-which(sample_names$hgnc_symbol == "")]
+  goodGenes <- sample(all_names, 10)
+  badGenes <- sample(all_names, 10)
+  plot_tibble <- reduce_data(expr_tibble = expr, names_ids = sample_names,
                              goodGenes, badGenes)
   p <- plot_ggplot(plot_tibble)
 }
