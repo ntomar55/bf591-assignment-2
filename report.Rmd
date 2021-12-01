@@ -71,11 +71,11 @@ print(paste(message, 'But there\'s always room for more.'))
 
 
 # Assignment
-Using what you now know from both plotting and data manipulation, use ggplot to create 
+Using what you know from this document and the `main.R` script, use the functions from `main.R` to draw a boxplot of  expression levels. Use this R Markdown document to describe your code as you are using it in this document, as done above. Take time to enhance your ggplot function from the `main.R` script with high quality visual aesthetics. Do not use default ggplot colors.
 
 ```{r}
+# use source to load your functions from main.R into this document.
 source("main.R")
-kissy()
 ```
 
 
