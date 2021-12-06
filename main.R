@@ -124,7 +124,7 @@ affy_to_hgnc <- function(affy_vector) {
         filters = c('affy_hg_u133_plus_2'),
         values = affy_vector, 
         mart = ensembl)
-  return(newNames)
+  return(as_tibble(newNames))
 }
 
 #### ggplot ####
@@ -161,13 +161,12 @@ affy_to_hgnc <- function(affy_vector) {
 reduce_data <- function(expr_tibble, names_ids, good_genes, bad_genes){
   expr_tibble <- add_column(expr_tibble, 
                             .after = "probeids",
-                            hgnc=sample_names[
-                              match(expr$probeids,
-                                    sample_names$affy_hg_u133_plus_2), 2])
-  good_tib <- expr_tibble[which(expr_tibble$hgnc %in% good_genes),]
-  good_tib <- add_column(good_tib, .after = "hgnc", gene_set = "good")
-  bad_tib <- expr_tibble[which(expr_tibble$hgnc %in% bad_genes),]
-  bad_tib <- add_column(bad_tib, .after = "hgnc", gene_set = "bad")
+                            names_ids[match(expr_tibble$probeids,
+                                            names_ids$affy_hg_u133_plus_2), 2])
+  good_tib <- expr_tibble[which(expr_tibble$hgnc_symbol %in% good_genes),]
+  good_tib <- add_column(good_tib, .after = "hgnc_symbol", gene_set = "good")
+  bad_tib <- expr_tibble[which(expr_tibble$hgnc_symbol %in% bad_genes),]
+  bad_tib <- add_column(bad_tib, .after = "hgnc_symbol", gene_set = "bad")
   return(rbind(good_tib, bad_tib))
 }
 
@@ -185,7 +184,7 @@ reduce_data <- function(expr_tibble, names_ids, good_genes, bad_genes){
 #' @examples `p <- plot_ggplot(plot_tibble)`
 plot_ggplot <- function(tibble) {
   tibble %>% pivot_longer(starts_with('GSM'), names_to = 'sample') -> tibble
-  p <- ggplot(tibble, aes(x=hgnc, y=value)) +
+  p <- ggplot(tibble, aes(x=hgnc_symbol, y=value)) +
     geom_boxplot()
   return(p)
 }
@@ -197,10 +196,10 @@ if(interactive()) {
   # expr <- load_expression("/project/bf528/project_1/data/example_intensity_data.csv")
   # samples <- filter_15(expr)
   # sample_names <- affy_to_hgnc(samples)
-  all_names <- sample_names$hgnc_symbol[-which(sample_names$hgnc_symbol == "")]
-  goodGenes <- sample(all_names, 10)
-  badGenes <- sample(all_names, 10)
-  plot_tibble <- reduce_data(expr_tibble = expr, names_ids = sample_names,
-                             goodGenes, badGenes)
-  p <- plot_ggplot(plot_tibble)
+  # all_names <- sample_names$hgnc_symbol[-which(sample_names$hgnc_symbol == "")]
+  # goodGenes <- sample(all_names, 10)
+  # badGenes <- sample(all_names, 10)
+  # plot_tibble <- reduce_data(expr_tibble = expr, names_ids = sample_names,
+  #                            goodGenes, badGenes)
+  # p <- plot_ggplot(plot_tibble)
 }
