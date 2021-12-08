@@ -20,6 +20,10 @@ if (!require("biomaRt", quietly = TRUE)){
 library(biomaRt)
 library(tidyverse)
 
+#### Tibbles tables and pipes ####
+# TODO: write a brief function to compare and contrast tibbles and DFs, use pipes
+
+#### Loading and processing data ####
 #' Load Expression Data
 #'
 #' @param filepath A text st1pm on Thursdayring of the full filepath to the file to load.
@@ -68,27 +72,6 @@ filter_15 <- function(tibble){
   row_pct <- apply(tibble[2:ncol(tibble)], percent_gt, MARGIN = 1) # don't capture first row
   boolean_rows <- which(row_pct > 0.15)
   return(tibble[boolean_rows, 1])
-}
-
-#### Data types ####
-join_str <- function(string1, string2) {
-  # take parameters string1 and string2, both strings, and return one combined string
-  # join_str("hello ", "world") returns  "hello world"
-  # NOTE: could also do something more complicated, a string search maybe
-  return(paste0(string1, string2))
-}
-
-boolean_filter <- function(boolean_array, int_array){
-  # given a vector of booleans and an equally sized vector of integers, return 
-  # a vector of all the integers corresponding to TRUE positions in the boolean.
-  # e.g. boolean_filter(c(TRUE, FALSE, TRUE), c(1, 2, 3)) would return [1] 1 3
-  return(int_array[boolean_array])
-}
-
-df_trim <- function(df, row_name, col_name) {
-  # given a data.frame df, and a vector of row_names and col_names, return a new
-  # data.frame with _only_ those rows and columns selected.
-  return(df[row_name, col_name])
 }
 
 #### Gene name conversion ####
