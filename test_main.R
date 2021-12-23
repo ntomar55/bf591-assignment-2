@@ -28,7 +28,7 @@ test_that("affy ids can be converted to HGNC names properly using affy_to_hgnc()
     expect_warning(warning("Could not connect to ENSEMBL."))
   } 
   else {
-    expect_equal(response$hgnc_symbol, c("MT-ND1", "MT-TI", "MT-TM", "MT-ND2"))
+    expect_equal(response$hgnc_symbol, c("MT-ND1", "MT-TI", "MT-TM", "MT-ND2", "MT-TW"))
   }
 })
 
