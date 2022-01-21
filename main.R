@@ -20,13 +20,10 @@ if (!require("biomaRt", quietly = TRUE)){
 library(biomaRt)
 library(tidyverse)
 
-#### Tibbles tables and pipes ####
-# TODO: write a brief function to compare and contrast tibbles and DFs, use pipes
-
 #### Loading and processing data ####
 #' Load Expression Data
 #'
-#' @param filepath A text st1pm on Thursdayring of the full filepath to the file to load.
+#' @param filepath A text string of the full filepath to the file to load.
 #'
 #' @return A tibble containing the data loaded from the CSV in `filepath`. 
 #' 
@@ -168,21 +165,8 @@ reduce_data <- function(expr_tibble, names_ids, good_genes, bad_genes){
 plot_ggplot <- function(tibble) {
   tibble %>% pivot_longer(starts_with('GSM'), names_to = 'sample') -> tibble
   p <- ggplot(tibble, aes(x=hgnc_symbol, y=value)) +
-    geom_boxplot()
+    geom_boxplot() +
+    theme(axis.text.x = element_text(angle = 90))
   return(p)
 }
 
-# this if statement means that this segment of code will only run when in 
-# interactive mode, i.e. RStudio. Using Rscript on the command line will not run 
-# this segment. 
-if(interactive()) {
-  # expr <- load_expression("/project/bf528/project_1/data/example_intensity_data.csv")
-  # samples <- filter_15(expr)
-  # sample_names <- affy_to_hgnc(samples)
-  # all_names <- sample_names$hgnc_symbol[-which(sample_names$hgnc_symbol == "")]
-  # goodGenes <- sample(all_names, 10)
-  # badGenes <- sample(all_names, 10)
-  # plot_tibble <- reduce_data(expr_tibble = expr, names_ids = sample_names,
-  #                            goodGenes, badGenes)
-  # p <- plot_ggplot(plot_tibble)
-}

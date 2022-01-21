@@ -1,5 +1,4 @@
 #!/usr/bin/Rscript
-# if you change the name of your script, this line must be changed as well
 source("main.R")
 library(testthat)
 
