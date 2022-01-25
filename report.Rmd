@@ -72,17 +72,17 @@ print(paste(message, 'But there\'s always room for more.'))
 
 
 # Assignment
-Using what you know from this document and the `main.R` script, use the functions from `main.R` to draw a box plot of  expression levels. Use this R Markdown document to describe your code as you are using it in this document, as done above. Take time to enhance your ggplot function from the `main.R` script with high quality visual aesthetics. Do not use default ggplot colors.
-```{r Assignment chunk}
+Using what you know from this document and the `main.R` script, use the functions from `main.R` to draw a box plot of  expression levels. You may wish to use the markdown conventions above to describe your code. Take time to enhance your ggplot function from the `main.R` script and do not use default ggplot colors.
+```{r Assignment chunk, echo=FALSE}
 # use source to load your functions from main.R into this document.
 source("main.R")
 expr <- load_expression("/project/bf528/project_1/data/example_intensity_data.csv")
-samples <- filter_15(expr)
-sample_names <- affy_to_hgnc(samples)
+# fill in the blanks here to process and plot your data
+samples <- 
+sample_names <- 
 goodGenes <- c("PKD1", "NOS3", "AGTR1", "COL4A5", "ECE1", "MEN1", "OLR1", "F7")
 badGenes <- c("TP53", "EGFR", "BRAF", "KRAS", "PIK3CA", "ERBB2", "MAPK1", "NRAS")
-plot_tibble <- reduce_data(expr_tibble = expr, names_ids = sample_names,
-                           goodGenes, badGenes)
+plot_tibble <- 
 p <- plot_ggplot(plot_tibble)
 p
 ```

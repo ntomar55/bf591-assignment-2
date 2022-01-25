@@ -52,7 +52,7 @@ test_that("reduce_data() is correctly changing the size and shape of the tibble"
 
 test_that("plot_ggplot() correctly creates a boxplot from sample data", {
   plot_tib <- tibble(probeids = c("202274_at", "202541_at", "202542_s_at", "203919_at"),
-                     hgnc = c("ACTG2", "AIMP1", "AIMP1", "TCEA2"),
+                     hgnc_symbol = c("ACTG2", "AIMP1", "AIMP1", "TCEA2"),
                      gene_set = rep("good", 4),
                      GSM1 = c(8.05, 8.40, 9.55, 4.44),
                      GSM2 = c(7.74, 7.11, 8.48, 5.39))

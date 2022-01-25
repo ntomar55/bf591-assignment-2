@@ -12,13 +12,14 @@
 # https://bioconductor.org/install/
 
 if (!require("BiocManager", quietly = TRUE)){
-  install.packages("BiocManager")
+  
 }
 if (!require("biomaRt", quietly = TRUE)){
-  BiocManager::install("biomaRt")
+  
 }
-library(biomaRt)
-library(tidyverse)
+# use library to load the packages, consider suppressPackageStartupMessages() 
+# for a quieter experience
+
 
 #### Loading and processing data ####
 #' Load Expression Data
@@ -35,9 +36,8 @@ library(tidyverse)
 #' @examples 
 #' `data <- load_expression('/project/bf528/project_1/data/example_intensity_data.csv')`
 load_expression <- function(filepath) {
-  tmp_csv <- read.csv(filepath, header = T, sep = " ")
-  tmp_csv <- cbind(probeids = row.names(tmp_csv), tmp_csv)
-  return(tibble(tmp_csv))
+  
+  return()
 }
 
 #' Filter 15% of the gene expression values.
@@ -57,18 +57,8 @@ load_expression <- function(filepath) {
 #' `$ probeids: chr [1:40158] "1007_s_at" "1053_at" "117_at" "121_at" ...`
 filter_15 <- function(tibble){
   # for each gene, at least 15% of the gene-expression values must be > log2(15)
-  percent_gt <- function(row) {
-    # functions can be defined inside other functions, which can be one style to
-    # make your code more repeatable
-    boolean_row <- row > log2(15)
-    percent_row <- sum(boolean_row)/length(row)
-    return(percent_row)
-  }
-  # there are many ways in R to apply our function to the entire tibble
-  # fastest would be an lapply, but a for loop would work (just slowly)
-  row_pct <- apply(tibble[2:ncol(tibble)], percent_gt, MARGIN = 1) # don't capture first row
-  boolean_rows <- which(row_pct > 0.15)
-  return(tibble[boolean_rows, 1])
+  
+  return()
 }
 
 #### Gene name conversion ####
@@ -96,15 +86,9 @@ filter_15 <- function(tibble){
 #' `4        1553551_s_at      MT-ND2`
 #' `5           202860_at     DENND4B`
 affy_to_hgnc <- function(affy_vector) {
-  affy_vector <- pull(affy_vector)
-  usemart <- useMart(host = 'https://www.ensembl.org',
-                     biomart = 'ENSEMBL_MART_ENSEMBL')
-  ensembl <- useDataset("hsapiens_gene_ensembl", useMart("ensembl"))
-  newNames <- getBM(attributes = c('affy_hg_u133_plus_2', 'hgnc_symbol'), 
-        filters = c('affy_hg_u133_plus_2'),
-        values = affy_vector, 
-        mart = ensembl)
-  return(as_tibble(newNames))
+  affy_vector <- pull(affy_vector) # tibble column to dataframe
+  
+  return()
 }
 
 #### ggplot ####
@@ -139,15 +123,8 @@ affy_to_hgnc <- function(affy_vector) {
 #' `1 202860_at   DENND4B good        7.16      ...`
 #' `2 204340_at   TMEM187 good        6.40      ...`
 reduce_data <- function(expr_tibble, names_ids, good_genes, bad_genes){
-  expr_tibble <- add_column(expr_tibble, 
-                            .after = "probeids",
-                            names_ids[match(expr_tibble$probeids,
-                                            names_ids$affy_hg_u133_plus_2), 2])
-  good_tib <- expr_tibble[which(expr_tibble$hgnc_symbol %in% good_genes),]
-  good_tib <- add_column(good_tib, .after = "hgnc_symbol", gene_set = "good")
-  bad_tib <- expr_tibble[which(expr_tibble$hgnc_symbol %in% bad_genes),]
-  bad_tib <- add_column(bad_tib, .after = "hgnc_symbol", gene_set = "bad")
-  return(rbind(good_tib, bad_tib))
+  
+  return()
 }
 
 #' Plot a boxplot of good and bad genes.
@@ -159,14 +136,16 @@ reduce_data <- function(expr_tibble, names_ids, good_genes, bad_genes){
 #' are interested in.
 #' 
 #' @details This function performs one additional step before using `ggplot()`: 
-#' converting the _wide_ format of the input tibble to a _long_ format.
+#' converting the _wide_ format of the input tibble to a _long_ format. The 
+#' finalize report has a lot of additional, useful features (colors, legend 
+#' placement, sorting of data). You might find this book resource helpful, but I
+#' would suggest searching online for resources like "change ggplot fill color" 
+#' or "reorder ggplot x-axis".
+#' https://ggplot2-book.org/getting-started.html?q=boxplot#boxplot
 #'
 #' @examples `p <- plot_ggplot(plot_tibble)`
 plot_ggplot <- function(tibble) {
-  tibble %>% pivot_longer(starts_with('GSM'), names_to = 'sample') -> tibble
-  p <- ggplot(tibble, aes(x=hgnc_symbol, y=value)) +
-    geom_boxplot() +
-    theme(axis.text.x = element_text(angle = 90))
+  
   return(p)
 }
 
