@@ -17,8 +17,8 @@ if (!require("BiocManager", quietly = TRUE)){
 if (!require("biomaRt", quietly = TRUE)){
   BiocManager::install("biomaRt")
 }
-library(biomaRt)
-library(tidyverse)
+suppressPackageStartupMessages(library(biomaRt))
+suppressPackageStartupMessages(library(tidyverse))
 
 #### Loading and processing data ####
 #' Load Expression Data
@@ -164,9 +164,19 @@ reduce_data <- function(expr_tibble, names_ids, good_genes, bad_genes){
 #' @examples `p <- plot_ggplot(plot_tibble)`
 plot_ggplot <- function(tibble) {
   tibble %>% pivot_longer(starts_with('GSM'), names_to = 'sample') -> tibble
+  tibble$hgnc_symbol <- factor(tibble$hgnc_symbol,
+                            levels = unique(tibble$hgnc_symbol), 
+                            ordered = TRUE)
   p <- ggplot(tibble, aes(x=hgnc_symbol, y=value)) +
-    geom_boxplot() +
-    theme(axis.text.x = element_text(angle = 90))
+    geom_boxplot(aes(fill = gene_set)) +
+    theme_bw() +
+    theme(axis.text.x = element_text(angle = 45, vjust = 0.5), 
+          legend.position = "bottom") +
+    scale_fill_manual(values = c("#DF2935", "#71B48D")) +
+    ggtitle("Boxplot of 16 somewhat randomly chosen genes", 
+            "like really I just kinda picked some random cancer ones") +
+    xlab("Gene") +
+    ylab("Expression levels")
   return(p)
 }
 
