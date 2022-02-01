@@ -72,19 +72,32 @@ print(paste(message, 'But there\'s always room for more.'))
 
 
 # Assignment
-Using what you know from this document and the `main.R` script, use the functions from `main.R` to draw a box plot of  expression levels. Use this R Markdown document to describe your code as you are using it in this document, as done above. Take time to enhance your ggplot function from the `main.R` script with high quality visual aesthetics. Do not use default ggplot colors.
-```{r Assignment chunk}
+Using what you know from this document and the `main.R` script, use the functions from `main.R` to draw a box plot of  expression levels. Use this R Markdown document to describe your code as you are using it in this document, as done above. Take time to enhance your ggplot function from the `main.R` script with high quality visual aesthetics. Do not use default ggplot colors.  
+
+Our first step is to source our `main.R` script to load our completed functions, and then load the data from the sample csv. This filepath should work if you are on the SCC, but a copy is also located in this repository's `data/` directory. Some functions in R can manage zipped data, but you may need to unzip (`unzip example_data.zip` on command line) the file before loading it into R.
+```{r Source and load data}
 # use source to load your functions from main.R into this document.
 source("main.R")
 expr <- load_expression("/project/bf528/project_1/data/example_intensity_data.csv")
-samples <- filter_15(expr)
-sample_names <- affy_to_hgnc(samples)
+head(expr)
+```
+
+Next, we apply the `filter_15()` function to eliminate some rows from out data. The rows remaining will have at least 15% of the expressions values above log<sub>2</sub>(15). We pass this smaller set of rows to `affy_to_hgnc()` which will find the HGNC gene ID based on the the affymetrix probe ID; we store those results in a separate data frame.
+``` {r Filter samples and find gene names}
+filter_15(expr) %>%
+affy_to_hgnc() -> sample_names
+head(sample_names)
+```
+
+Finally, we use a psuedo-random selection of 8 "good" and 8 "bad" genes to compare expression levels (I just picked which is which on a whim, apologies if I called your favorite gene a bad gene). We use `reduce_data()` to create a tibble of **only** the good and bad genes. Note that some genes may correspond to multiple probes, as in you could have multiple rows for gene gene. Finally, we create a boxplot and add some nice visual bells and whistles using `plot_ggplot()`. See how well you can recreate it! The colors I chose were `c("#DF2935", "#71B48D")`.
+``` {r Select genes and plot}
 goodGenes <- c("PKD1", "NOS3", "AGTR1", "COL4A5", "ECE1", "MEN1", "OLR1", "F7")
 badGenes <- c("TP53", "EGFR", "BRAF", "KRAS", "PIK3CA", "ERBB2", "MAPK1", "NRAS")
-plot_tibble <- reduce_data(expr_tibble = expr, names_ids = sample_names,
-                           goodGenes, badGenes)
+plot_tibble <- reduce_data(expr_tibble = expr, 
+                           names_ids = sample_names,
+                           goodGenes, 
+                           badGenes)
+head(plot_tibble)
 p <- plot_ggplot(plot_tibble)
 p
 ```
-
-
