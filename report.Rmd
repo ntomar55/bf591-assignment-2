@@ -20,7 +20,7 @@ R Markdown, `.Rmd` files, are a type of markdown files that can execute R code i
 ---
 
 ## Markdown Basics
-The raw markdown, which you may or may not be looking at, is styled very basically. The largest titles start with one octothorpe `#`. The more `#`'s added, the smaller a title or header becomes.  
+The raw markdown, which you may or may not be looking at, is styled very basically. The largest titles start with one octothorpe `#`. The more `#`'s added, the smaller a title or header becomes. These headings can be used to complete a table of contents, in some situations (like the class website).
 
 # Biggest  
 ## 2nd Biggest  
@@ -89,7 +89,7 @@ affy_to_hgnc() -> sample_names
 head(sample_names)
 ```
 
-Finally, we use a psuedo-random selection of 8 "good" and 8 "bad" genes to compare expression levels (I just picked which is which on a whim, apologies if I called your favorite gene a bad gene). We use `reduce_data()` to create a tibble of **only** the good and bad genes. Note that some genes may correspond to multiple probes, as in you could have multiple rows for gene gene. Finally, we create a boxplot and add some nice visual bells and whistles using `plot_ggplot()`. See how well you can recreate it! The colors I chose were `c("#DF2935", "#71B48D")`.
+Finally, we use a pseudo-random selection of 8 "good" and 8 "bad" genes to compare expression levels (I just picked which is which on a whim, apologies if I called your favorite gene a bad gene). We use `reduce_data()` to create a tibble of **only** the good and bad genes. Note that some genes may correspond to multiple probes, as in you could have multiple rows for gene gene. Finally, we create a box plot and add some nice visual bells and whistles using `plot_ggplot()`. See how well you can recreate it! The colors I chose were `c("#DF2935", "#71B48D")`.
 ``` {r Select genes and plot}
 goodGenes <- c("PKD1", "NOS3", "AGTR1", "COL4A5", "ECE1", "MEN1", "OLR1", "F7")
 badGenes <- c("TP53", "EGFR", "BRAF", "KRAS", "PIK3CA", "ERBB2", "MAPK1", "NRAS")
@@ -98,6 +98,5 @@ plot_tibble <- reduce_data(expr_tibble = expr,
                            goodGenes, 
                            badGenes)
 head(plot_tibble)
-p <- plot_ggplot(plot_tibble)
-p
+plot_ggplot(plot_tibble)
 ```
