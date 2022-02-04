@@ -12,14 +12,14 @@
 # https://bioconductor.org/install/
 
 if (!require("BiocManager", quietly = TRUE)){
-  
+
 }
 if (!require("biomaRt", quietly = TRUE)){
-  
-}
-# use library to load the packages, consider suppressPackageStartupMessages() 
-# for a quieter experience
 
+}
+# load tidyverse and your new bioconductor package
+library()
+library()
 
 #### Loading and processing data ####
 #' Load Expression Data
@@ -36,8 +36,7 @@ if (!require("biomaRt", quietly = TRUE)){
 #' @examples 
 #' `data <- load_expression('/project/bf528/project_1/data/example_intensity_data.csv')`
 load_expression <- function(filepath) {
-  
-  return()
+  return(NULL)
 }
 
 #' Filter 15% of the gene expression values.
@@ -56,8 +55,6 @@ load_expression <- function(filepath) {
 #' `tibble [40,158 × 1] (S3: tbl_df/tbl/data.frame)`
 #' `$ probeids: chr [1:40158] "1007_s_at" "1053_at" "117_at" "121_at" ...`
 filter_15 <- function(tibble){
-  # for each gene, at least 15% of the gene-expression values must be > log2(15)
-  
   return()
 }
 
@@ -86,8 +83,6 @@ filter_15 <- function(tibble){
 #' `4        1553551_s_at      MT-ND2`
 #' `5           202860_at     DENND4B`
 affy_to_hgnc <- function(affy_vector) {
-  affy_vector <- pull(affy_vector) # tibble column to dataframe
-  
   return()
 }
 
@@ -123,7 +118,6 @@ affy_to_hgnc <- function(affy_vector) {
 #' `1 202860_at   DENND4B good        7.16      ...`
 #' `2 204340_at   TMEM187 good        6.40      ...`
 reduce_data <- function(expr_tibble, names_ids, good_genes, bad_genes){
-  
   return()
 }
 
@@ -136,16 +130,10 @@ reduce_data <- function(expr_tibble, names_ids, good_genes, bad_genes){
 #' are interested in.
 #' 
 #' @details This function performs one additional step before using `ggplot()`: 
-#' converting the _wide_ format of the input tibble to a _long_ format. The 
-#' finalize report has a lot of additional, useful features (colors, legend 
-#' placement, sorting of data). You might find this book resource helpful, but I
-#' would suggest searching online for resources like "change ggplot fill color" 
-#' or "reorder ggplot x-axis".
-#' https://ggplot2-book.org/getting-started.html?q=boxplot#boxplot
+#' converting the _wide_ format of the input tibble to a _long_ format.
 #'
 #' @examples `p <- plot_ggplot(plot_tibble)`
 plot_ggplot <- function(tibble) {
-  
-  return(p)
+  return()
 }
 
