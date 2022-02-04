@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-**Please read this brief introduction to R Markdown, and complete the second half of the document yourself.**
+**Please read this brief introduction to R Markdown, and complete the second half using your `main.R` functions.**
 
 # R Markdown
 R Markdown, `.Rmd` files, are a type of markdown files that can execute R code in an R environment. Markdown is an open source language used for easily creating documents such as web pages and PDFs. Markdown and R Markdown can be used to procedurally generate documents and reports, which have a wide number of use-cases across bioinformatics. Not only can you save time by creating code to automatically draft documents, you can also include detailed instructions and information alongside your code.
