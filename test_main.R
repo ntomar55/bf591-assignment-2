@@ -3,7 +3,7 @@ source("main.R")
 library(testthat)
 
 test_that("loading csv works using load_expression()", {
-  result_tib <- load_expression("/project/bf528/project_1/data/example_intensity_data.csv")
+  result_tib <- load_expression(unzip("data/example_intensity_data.zip"))
   expect_equal(dim(result_tib), c(54675, 36))
   expect_true(is_tibble(result_tib))
 })
