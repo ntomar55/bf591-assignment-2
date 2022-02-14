@@ -12,15 +12,17 @@
 # https://bioconductor.org/install/
 
 if (!require("BiocManager", quietly = TRUE)){
-
+  install.packages("BiocManager")
+  BiocManager::install(version = "3.14")
 }
 if (!require("biomaRt", quietly = TRUE)){
-
+    install.packages("BiocManager")
+  BiocManager::install("biomaRt")
 }
 # load tidyverse and your new bioconductor package
-library()
-library()
-
+library('tidyverse')
+library('biomaRt')
+# 
 #### Loading and processing data ####
 #' Load Expression Data
 #'
@@ -36,7 +38,9 @@ library()
 #' @examples 
 #' `data <- load_expression('/project/bf528/project_1/data/example_intensity_data.csv')`
 load_expression <- function(filepath) {
-  return(NULL)
+  data_tbl <- tibble::as.tibble(readr::read_delim(filepath, delim = " "))
+  readr::problems(data_tbl)
+  return(data_tbl)
 }
 
 #' Filter 15% of the gene expression values.
@@ -55,7 +59,15 @@ load_expression <- function(filepath) {
 #' `tibble [40,158 × 1] (S3: tbl_df/tbl/data.frame)`
 #' `$ probeids: chr [1:40158] "1007_s_at" "1053_at" "117_at" "121_at" ...`
 filter_15 <- function(tibble){
-  return()
+  fun <- function(x){ 
+    val <- as.numeric(x[-1])
+    probe_id = x[1]
+    tf <- ifelse(length(which(val > log2(15)))/length(val) >= 0.15, T, F)
+    return (tf)
+  }
+  tru_or_fal = apply(tibble, 1, fun)
+  res <- tibble[which(tru_or_fal),1]
+  return(res)
 }
 
 #### Gene name conversion ####
@@ -83,7 +95,14 @@ filter_15 <- function(tibble){
 #' `4        1553551_s_at      MT-ND2`
 #' `5           202860_at     DENND4B`
 affy_to_hgnc <- function(affy_vector) {
-  return()
+  affyids <- pull(affy_vector)
+  ensembl <- useEnsembl(biomart = "genes", dataset = "hsapiens_gene_ensembl")
+  affyid_hgnc <- getBM(attributes = c('affy_hg_u133_plus_2', 'hgnc_symbol'),
+        filters = 'affy_hg_u133_plus_2',
+        values = affyids,
+        mart = ensembl)
+  affyid_hgnc_tibble <- as.tibble(affyid_hgnc)
+  return(affyid_hgnc_tibble)
 }
 
 #### ggplot ####
@@ -117,8 +136,23 @@ affy_to_hgnc <- function(affy_vector) {
 #' `  <chr>       <chr>   <chr>       <dbl>     ...`
 #' `1 202860_at   DENND4B good        7.16      ...`
 #' `2 204340_at   TMEM187 good        6.40      ...`
+
 reduce_data <- function(expr_tibble, names_ids, good_genes, bad_genes){
-  return()
+  hgnc_col <- names_ids$hgnc_symbol[match(expr_tibble$probeids, names_ids$affy_hg_u133_plus_2)]
+  expr_tibble_new <- add_column(expr_tibble, .after = 1, hgnc_symbol=hgnc_col)
+  
+  good_affys <- names_ids$affy_hg_u133_plus_2[which(names_ids$hgnc_symbol %in% good_genes)]
+  bad_affys <- names_ids$affy_hg_u133_plus_2[which(names_ids$hgnc_symbol %in% bad_genes)]
+
+  good_idx <- match(good_affys, expr_tibble$probeids)
+  bad_idx <- match(bad_affys, expr_tibble$probeids)
+  
+  expr_tibble_new$gene_set <- rep(NA, length(expr_tibble_new[,1]))
+  expr_tibble_new$gene_set[good_idx] <- "good"
+  expr_tibble_new$gene_set[bad_idx] <- "bad"
+  expr_tibble_new <- relocate(expr_tibble_new, .after = 2, gene_set)
+  res <- expr_tibble_new[complete.cases(expr_tibble_new),]
+  return(res)
 }
 
 #' Plot a boxplot of good and bad genes.
@@ -133,7 +167,16 @@ reduce_data <- function(expr_tibble, names_ids, good_genes, bad_genes){
 #' converting the _wide_ format of the input tibble to a _long_ format.
 #'
 #' @examples `p <- plot_ggplot(plot_tibble)`
+
 plot_ggplot <- function(tibble) {
-  return()
+  long_tibble <- gather(tibble, subject_id, gene_exp, 4:5)
+  #long_tibble
+  plot <- ggplot(data=long_tibble, mapping=aes(x=gene_set, y=gene_exp, col=gene_set, fill=gene_set))+
+    geom_boxplot(alpha=0.2) +
+    scale_color_manual(values = c("red", "blue")) +
+    scale_fill_manual(values=c("orange", "skyblue")) +
+    labs(x="Gene Set", y="Gene Expression")
+  
+  return(plot)
 }
 
